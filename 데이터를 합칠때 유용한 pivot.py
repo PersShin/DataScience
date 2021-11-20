@@ -1,0 +1,1 @@
+df_dust=df_dust.pivot(index={'지점명','Date','호선'}, columns='시간',values='측정값').reset_index()
