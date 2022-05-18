@@ -1,0 +1,31 @@
+#처음에는 id에 따라 데이터를 뽑는다.
+#for i in df['Arbitration_ID'].unique():
+for i in range(153,154):
+    temp=df[df['Arbitration_ID']=='153']
+    temp=temp.reset_index(drop=False)
+    label=0#양성이 0
+    label_sheet=[]
+    id_sheet=[]
+    #t_temp=temp['Data'][0]
+    #256개의 데이터-> 16*16-> 32*8
+    for q in range(0,int(temp.shape[0]/32)):
+        for n in range(32):
+            if n==0:
+                t_temp=temp['Data'][n+32*q]
+                if temp['Class'][n+32*q]=='Attack':
+                    label=1
+            else:
+                t_temp+=temp['Data'][n+32*q]
+                if temp['Class'][n+32*q]=='Attack':
+                    label=1
+        t_temp=t_temp.replace(' ','')
+        newstring = bytearray.fromhex(t_temp)
+        file = open('./train/bin/sample'+str(q)+'.bin', "wb")
+        file.write(newstring)
+        file.close()
+        making_pic(str(q))
+        label_sheet.append(label)
+        id_sheet.append(str(q))
+df = pd.DataFrame((zip(id_sheet, label_sheet)), columns = ['ID', 'label'])
+df
+df.to_csv('./train/train_file.csv')
